@@ -61,7 +61,7 @@ class SpaceMouseJoy(Node):
 
             joy_msg = self.create_joy_message(state)
             self.publisher_.publish(joy_msg)
-            self.get_logger().info(f'Published: {joy_msg.axes}')
+            self.get_logger().info(f'Published: axes={joy_msg.axes}, buttons={joy_msg.buttons}')
 
         except HIDException as e:
             self.get_logger().warn(f'SpaceMouse read error: {e}. Publishing zero values.')
@@ -85,7 +85,12 @@ class SpaceMouseJoy(Node):
             float(state.roll) if state.roll is not None else 0.0,  # Rotation Roll (twist)
             float(state.yaw) if state.yaw is not None else 0.0,  # Rotation Yaw (horizontal)
         ]
-        joy_msg.buttons = []  # TODO: Populate with the 2 SpaceMouse buttons
+        joy_msg.buttons = [
+            int(state.buttons[0]) if state.buttons[0] is not None else 0,  # Button 1 (left)
+            int(state.buttons[1]) if state.buttons[1] is not None else 0,  # Button 2 (right)
+
+        ]
+
         return joy_msg
 
     def create_zero_state(self):

@@ -13,8 +13,6 @@ The outputs represent the axes as follows:
 - `float` - Rotation Pitch (forward/backward)
 - `float` - Rotation Roll (twist)
 - `float` - Rotation Yaw (left/right)
-
-Work in progress, intended to implement:
 - `int` - Left button
 - `int` - Right button
 
@@ -78,7 +76,7 @@ Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/
 
 3. Disconnect and reconnect the SpaceMouse.
 
-4. Make sure the current user belongs to the input group:
+4. Make sure the current user belongs to the input group (expect no output):
     ```sh
     sudo usermod -a -G input $USER
     ```
