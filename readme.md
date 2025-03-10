@@ -54,10 +54,9 @@ Source: [PySpaceMouse GitHub](https://github.com/JakubAndrysek/PySpaceMouse)
         ```
 
 ### Part 2: Give Permission to Access HID Devices
+Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/144306644)
 
 By default, ordinary users may not have permission to access HID devices.
-
-Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/144306644)
 
 1. Run the following command to add the `idVendor` and `idProduct` of the 3D SpaceMouse in udev rules:
     ```sh
