@@ -7,8 +7,8 @@ This ROS 2 package provides a node that publishes SpaceMouse input as a `Joy` me
 The main node in this package is `spacemouse_joy.py`, which handles the connection to the SpaceMouse, reads its state, and publishes the data as a `Joy` message. If the SpaceMouse is disconnected, the node will attempt to reconnect and continue publishing zero values for all axes until the connection is restored.
 
 The outputs represent the axes as follows:
-- `float` - Translation X (forward/backward)
-- `float` - Translation Y (left/right)
+- `float` - Translation X (left/right)
+- `float` - Translation Y (forward/backward)
 - `float` - Translation Z (up/down)
 - `float` - Rotation Pitch (forward/backward)
 - `float` - Rotation Roll (twist)

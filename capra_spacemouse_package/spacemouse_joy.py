@@ -78,8 +78,8 @@ class SpaceMouseJoy(Node):
         """Converts SpaceMouse state into a Joy message."""
         joy_msg = Joy()
         joy_msg.axes = [
-            float(state.x) if state.x is not None else 0.0,  # Translation X (forward/backward)
-            float(state.y) if state.y is not None else 0.0,  # Translation Y (left/right)
+            float(state.x) if state.x is not None else 0.0,  # Translation X (left/right)
+            float(state.y) if state.y is not None else 0.0,  # Translation Y (forward/backward)
             float(state.z) if state.z is not None else 0.0,  # Translation Z (up/down)
             float(state.pitch) if state.pitch is not None else 0.0,  # Rotation Pitch (vertical)
             float(state.roll) if state.roll is not None else 0.0,  # Rotation Roll (twist)
