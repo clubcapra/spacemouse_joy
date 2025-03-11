@@ -10,9 +10,9 @@ The outputs represent the axes as follows:
 - `float` - Translation X (left/right)
 - `float` - Translation Y (forward/backward)
 - `float` - Translation Z (up/down)
-- `float` - Rotation Pitch (forward/backward)
-- `float` - Rotation Roll (left/right)
-- `float` - Rotation Yaw (twist)
+- `float` - Rotation Pitch (lateral axis - forward/backward)
+- `float` - Rotation Roll (longitudinal axis - left right)
+- `float` - Rotation Yaw (perpendicular axis - twist)
 - `int` - Left button
 - `int` - Right button
 
