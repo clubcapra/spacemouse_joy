@@ -86,9 +86,8 @@ class SpaceMouseJoy(Node):
             float(state.yaw) if state.yaw is not None else 0.0,  # Rotation Yaw (horizontal)
         ]
         joy_msg.buttons = [
-            int(state.buttons[0]) if state.buttons[0] is not None else 0,  # Button 1 (left)
-            int(state.buttons[1]) if state.buttons[1] is not None else 0,  # Button 2 (right)
-
+            int(state.buttons[0]) if state.buttons and state.buttons[0] is not None else 0,  # Button 1 (left)
+            int(state.buttons[1]) if state.buttons and state.buttons[1] is not None else 0,  # Button 2 (right)
         ]
 
         return joy_msg
@@ -97,6 +96,7 @@ class SpaceMouseJoy(Node):
         """Creates a state with zero values for all axes."""
         class ZeroState:
             x = y = z = pitch = yaw = roll = 0.0
+            buttons = [0, 0]
 
         return ZeroState()
 
