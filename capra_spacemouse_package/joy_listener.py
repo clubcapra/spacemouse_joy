@@ -26,7 +26,7 @@ class JoyListener(Node):
         twist_msg.linear.z = msg.axes[2]  # Up/down motion (Z-axis)
         twist_msg.angular.x = msg.axes[3]  # Rotation in pitch
         twist_msg.angular.y = msg.axes[4]  # Rotation in roll
-        twist_msg.angular.z = msg.axes[5]  # Rotation in yaw
+        twist_msg.angular.z = msg.axes[5]  # Rotation in yaw (twist)
 
         # Publish the twist message
         self.cmd_vel_publisher.publish(twist_msg)
