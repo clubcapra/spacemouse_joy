@@ -54,7 +54,7 @@ Source: [PySpaceMouse GitHub](https://github.com/JakubAndrysek/PySpaceMouse)
         ```
 
 ### Part 2: Give Permission to Access HID Devices
-Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/144306644)
+Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/144306644) [Wayback Machine Mirror](https://web.archive.org/web/20250405190521/https://blog.csdn.net/qq_40081208/article/details/144306644)
 
 By default, ordinary users may not have permission to access HID devices.
 
