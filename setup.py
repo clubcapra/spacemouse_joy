@@ -16,11 +16,11 @@ setup(
     maintainer='Club Capra ETS',
     maintainer_email='capra@ens.etsmtl.ca',
     description='''This ROS 2 package provides a node to publish a 3DSpaceMouse's input as constant `Joy` messages and another to listen to and print `Joy` messages for easy validation. It supports disconnects.''',
-    license='MIT License',
+    license='MIT',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'spacemouse_joy = capra_spacemouse_package.spacemouse_joy:main',
+            'spacemouse_joy_publisher = capra_spacemouse_package.spacemouse_joy_publisher:main',
             'joy_listener = capra_spacemouse_package.joy_listener:main'
 
         ],
