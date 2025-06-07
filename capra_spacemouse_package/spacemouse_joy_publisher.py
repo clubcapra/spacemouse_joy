@@ -61,7 +61,16 @@ class SpaceMouseJoy(Node):
 
             joy_msg = self.create_joy_message(state)
             self.publisher_.publish(joy_msg)
-            self.get_logger().info(f'Published: axes={joy_msg.axes}, buttons={joy_msg.buttons}')
+
+            # Print the Joy message axes and buttons for debugging
+
+            # Full float data:
+            #self.get_logger().info(f'Published: axes={joy_msg.axes}, buttons={joy_msg.buttons}')
+            
+            # Abbreviated float data for better readability:
+            printable_axes = [f"{x:6.2f}" for x in joy_msg.axes]
+            printable_buttons = " ".join(str(b) for b in joy_msg.buttons)
+            self.get_logger().info(f"Axes: {' '.join(printable_axes)}   Buttons: {printable_buttons}")
 
         except HIDException as e:
             self.get_logger().warn(f'SpaceMouse read error: {e}. Publishing zero values.')
@@ -77,13 +86,19 @@ class SpaceMouseJoy(Node):
     def create_joy_message(self, state):
         """Converts SpaceMouse state into a Joy message."""
         joy_msg = Joy()
+
+        # Matching axes to twist msg axes
+        
         joy_msg.axes = [
-            float(state.x) if state.x is not None else 0.0,  # Translation X (left/right)
+            # Publishing as epxected by twist
             float(state.y) if state.y is not None else 0.0,  # Translation Y (forward/backward)
+            float(state.x) if state.x is not None else 0.0,  # Translation X (left/right)
             float(state.z) if state.z is not None else 0.0,  # Translation Z (up/down)
-            float(state.pitch) if state.pitch is not None else 0.0,  # Rotation Pitch (vertical)
-            float(state.roll) if state.roll is not None else 0.0,  # Rotation Roll (twist)
-            float(state.yaw) if state.yaw is not None else 0.0,  # Rotation Yaw (horizontal)
+
+            # Publishing as expected for conversion in quaternion
+            float(state.roll) if state.roll is not None else 0.0,  # Rotation Y (roll)
+            float(state.pitch) if state.pitch is not None else 0.0,  # Rotation X (pitch)
+            float(state.yaw) if state.yaw is not None else 0.0,  # Rotation Z (yaw/twist)
         ]
         joy_msg.buttons = [
             int(state.buttons[0]) if state.buttons and state.buttons[0] is not None else 0,  # Button 1 (left)
