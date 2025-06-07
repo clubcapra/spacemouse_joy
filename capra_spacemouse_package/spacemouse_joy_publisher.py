@@ -13,7 +13,7 @@ class SpaceMouseJoy(Node):
 
     def __init__(self):
         super().__init__('spacemouse_joy_publisher')
-        self.publisher_ = self.create_publisher(Joy, 'joy', 10)
+        self.publisher_ = self.create_publisher(Joy, '/spacemouse_joy', 10)
         self.timer = self.create_timer(self.TIMER_FREQUENCY, self.publish_joy_data)  # Timer for publishing Joy messages
         self.reconnect_timer = None
 
