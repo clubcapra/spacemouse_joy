@@ -51,6 +51,68 @@ Publishes 3D SpaceMouse data to the `/spacemouse_joy` topic as a standard `senso
 - On error: publishes zeros and starts a 1 Hz reconnect timer.
 - On successful reconnection: resumes normal publishing.
 
+
+## Setup
+
+This setup is simplified for Ubuntu 22.04. See the original documentation for a complete setup.
+
+### Part 1: Installing PySpaceMouse
+
+Source: [PySpaceMouse GitHub](https://github.com/JakubAndrysek/PySpaceMouse)
+
+1. Install the package:
+    ```sh
+    pip install pyspacemouse
+    ```
+
+2. Install dependencies:
+    1. The library uses `hidapi` as a low-level interface to the device and `easyhid` as a Python abstraction for easier use.
+        ```sh
+        sudo apt-get install libhidapi-dev
+        ```
+
+    2. Add rules for permissions:
+        ```sh
+        sudo echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-hidraw-permissions.rules
+        sudo usermod -aG plugdev $USER
+        newgrp plugdev
+        ```
+
+    3. `easyhid` is a `hidapi` interface for Python - required on all platforms:
+        ```sh
+        pip install git+https://github.com/bglopez/python-easyhid.git
+        ```
+
+### Part 2: Give Permission to Access HID Devices
+Source (Chinese): [CSDN Blog](https://blog.csdn.net/qq_40081208/article/details/144306644) [Wayback Machine Mirror](https://web.archive.org/web/20250405190521/https://blog.csdn.net/qq_40081208/article/details/144306644)
+
+By default, ordinary users may not have permission to access HID devices.
+
+1. Run the following command to add the `idVendor` and `idProduct` of the 3D SpaceMouse in udev rules:
+    ```sh
+    sudo tee /etc/udev/rules.d/99-spacemouse.rules > /dev/null <<EOF
+    SUBSYSTEM=="input", GROUP="input", MODE="0660"
+    KERNEL=="hidraw*", ATTRS{idVendor}=="256f", ATTRS{idProduct}=="c635", MODE="0666"
+    EOF
+    ```
+    *These IDs are for CAPRA's SpaceMouse. See the original setup for other devices.*
+
+2. Reload udev rules:
+    ```sh
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    ```
+
+3. Disconnect and reconnect the SpaceMouse.
+
+4. Make sure the current user belongs to the input group (expect no output):
+    ```sh
+    sudo usermod -a -G input $USER
+    ```
+
+5. Log out and log back in to Ubuntu.
+
+
 ## Launch
 
 All nodes can be launched using:
