@@ -11,8 +11,8 @@ class SpaceMouseJoy(Node):
 
     TIMER_FREQUENCY = 0.01  # 100 Hz
     RECONNECT_FREQUENCY = 1.0  # Reconnect attempt frequency for SpaceMouse
-    TCP_IP = '127.0.0.1' #'rove-hotspot.local'
-    TCP_PORT = 9999
+    TCP_IP = 'rove-hotspot.local' #hostname of rove router
+    TCP_PORT = 8584
 
     def __init__(self):
         super().__init__('spacemouse_tcp_client')

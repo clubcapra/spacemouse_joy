@@ -22,7 +22,7 @@ setup(
         'console_scripts': [
             'spacemouse_publisher = spacemouse_joy.spacemouse_publisher:main',
             'spacemouse_tcp_client = spacemouse_joy.spacemouse_tcp_client:main',
-            'spacemouse_tcp_server = spacemouse_joy.spacemouse_tcp_server:main'
+            'spacemouse_tcp_server = spacemouse_joy.spacemouse_tcp_server:main',
         ],
     },
 )
