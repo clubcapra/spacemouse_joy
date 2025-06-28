@@ -3,10 +3,6 @@ build/
 log/
 install/
 
-# Ignore everything in src except rove_*
-src/*
-!src/rove_*
-
 # Ignore Python bytecodes
 __pycache__/
 *.pyc

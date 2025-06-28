@@ -4,7 +4,6 @@ from sensor_msgs.msg import Joy
 import pyspacemouse
 from easyhid.easyhid import HIDException  # Handle HID errors (disconnection issues)
 
-
 class SpaceMouseJoy(Node):
     """Publishes SpaceMouse input as a Joy message."""
 

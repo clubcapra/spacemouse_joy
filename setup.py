@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'capra_spacemouse_package'
+package_name = 'spacemouse_joy'
 
 setup(
     name=package_name,
@@ -20,9 +20,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'spacemouse_joy_publisher = capra_spacemouse_package.spacemouse_joy_publisher:main',
-            'joy_listener = capra_spacemouse_package.joy_listener:main'
-
+            'spacemouse_publisher = spacemouse_joy.spacemouse_publisher:main',
+            'spacemouse_tcp_client = spacemouse_joy.spacemouse_tcp_client:main',
+            'spacemouse_tcp_server = spacemouse_joy.spacemouse_tcp_server:main',
         ],
     },
 )
