@@ -3,16 +3,27 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 import pyspacemouse
 from easyhid.easyhid import HIDException  # Handle HID errors (disconnection issues)
+import socket
+import struct 
 
-class SpaceMouseJoy(Node):
-    """Publishes SpaceMouse input as a Joy message."""
+TCP_IP = 'rove-hotspot.local'
+TCP_PORT = 9999
+
+class SpaceMouseJoyTCP(Node):
 
     TIMER_FREQUENCY = 0.01  # Timer frequency for publishing Joy messages
     RECONNECT_FREQUENCY = 1.0  # Timer frequency for attempting reconnection
 
     def __init__(self):
-        super().__init__('spacemouse_joy_publisher')
-        self.publisher_ = self.create_publisher(Joy, '/spacemouse_joy', 10)
+        super().__init__('spacemouse_joy_tcp_client')
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.settimeout(1.0)
+        try:
+            self.sock.connect((TCP_IP, TCP_PORT))
+        except Exception as e:
+            self.get_logger().error(f"Could not connect to TCP server: {e}")
+            self.sock = None
+        
         self.timer = self.create_timer(self.TIMER_FREQUENCY, self.publish_joy_data)  # Timer for publishing Joy messages
         self.reconnect_timer = None
 
@@ -25,62 +36,21 @@ class SpaceMouseJoy(Node):
             except Exception as e:
                 self.get_logger().error(f'Failed to connect SpaceMouse: {e}')
 
-
-    def start_reconnect_timer(self):
-        """Starts a timer to attempt reconnection to the SpaceMouse."""
-        if self.reconnect_timer is None:
-            self.reconnect_timer = self.create_timer(self.RECONNECT_FREQUENCY, self.attempt_reconnect)
-            self.get_logger().info('Started reconnect timer.')
-
-    def stop_reconnect_timer(self):
-        """Stops the reconnection timer."""
-        if self.reconnect_timer is not None:
-            self.reconnect_timer.cancel()
-            self.reconnect_timer = None
-            self.get_logger().info('Stopped reconnect timer.')
-
-    def attempt_reconnect(self):
-        """Attempts to reconnect to the SpaceMouse."""
-        try:
-            if pyspacemouse.open():
-                self.get_logger().info('Reconnected to SpaceMouse.')
-                self.stop_reconnect_timer()
-            else:
-                self.get_logger().error('Failed to reconnect SpaceMouse. Publishing zero values.')
-        except Exception as e:
-            self.get_logger().error(f'Error while attempting to reconnect SpaceMouse: {e}')
-
     def publish_joy_data(self):
-        """Reads SpaceMouse state and publishes a Joy message."""
         try:
             state = pyspacemouse.read()
             if state is None:
-                self.get_logger().warn('SpaceMouse returned no data! Publishing zero values.')
                 state = self.create_zero_state()
-
             joy_msg = self.create_joy_message(state)
-            self.publisher_.publish(joy_msg)
 
-            # Print the Joy message axes and buttons for debugging
+            # Serialize: 6 floats for axes, 2 ints for buttons
+            if self.sock:
+                packed = struct.pack('6f2B', *joy_msg.axes, *joy_msg.buttons)
+                self.sock.sendall(packed)
 
-            # Full float data:
-            #self.get_logger().info(f'Published: axes={joy_msg.axes}, buttons={joy_msg.buttons}')
-            
-            # Abbreviated float data for better readability:
-            printable_axes = [f"{x:6.2f}" for x in joy_msg.axes]
-            printable_buttons = " ".join(str(b) for b in joy_msg.buttons)
-            self.get_logger().info(f"Axes: {' '.join(printable_axes)}   Buttons: {printable_buttons}")
-
-        except HIDException as e:
-            self.get_logger().warn(f'SpaceMouse read error: {e}. Publishing zero values.')
-            joy_msg = self.create_joy_message(self.create_zero_state())
-            self.publisher_.publish(joy_msg)
-            self.start_reconnect_timer()
-
+            # Optional: self.get_logger().info(f"Sent Joy: {joy_msg.axes}, {joy_msg.buttons}")
         except Exception as e:
-            self.get_logger().error(f'Unexpected error while reading SpaceMouse: {e}')
-            joy_msg = self.create_joy_message(self.create_zero_state())
-            self.publisher_.publish(joy_msg)
+            self.get_logger().warn(f"Failed to send data: {e}")
 
     def create_joy_message(self, state):
         """Converts SpaceMouse state into a Joy message."""
@@ -114,10 +84,32 @@ class SpaceMouseJoy(Node):
 
         return ZeroState()
 
+    def start_reconnect_timer(self):
+        """Starts a timer to attempt reconnection to the SpaceMouse."""
+        if self.reconnect_timer is None:
+            self.reconnect_timer = self.create_timer(self.RECONNECT_FREQUENCY, self.attempt_reconnect)
+            self.get_logger().info('Started reconnect timer.')
+
+    def stop_reconnect_timer(self):
+        """Stops the reconnection timer."""
+        if self.reconnect_timer is not None:
+            self.reconnect_timer.cancel()
+            self.reconnect_timer = None
+            self.get_logger().info('Stopped reconnect timer.')
+
+    def attempt_reconnect(self):
+        """Attempts to reconnect to the SpaceMouse."""
+        try:
+            if pyspacemouse.open():
+                self.get_logger().info('Reconnected to SpaceMouse.')
+                self.stop_reconnect_timer()
+            else:
+                self.get_logger().error('Failed to reconnect SpaceMouse. Publishing zero values.')
+        except Exception as e:
+            self.get_logger().error(f'Error while attempting to reconnect SpaceMouse: {e}')
 
 def main(args=None):
     rclpy.init(args=args)
-    node = SpaceMouseJoy()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
