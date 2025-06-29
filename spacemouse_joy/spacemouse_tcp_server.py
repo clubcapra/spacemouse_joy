@@ -21,7 +21,7 @@ class SpaceMouseServer(Node):
         joy.buttons = [int(axes[6]), int(axes[7])]
         self.publisher.publish(joy)
 
-def tcp_server(node, ip='localhost', port=2222):
+def tcp_server(node, ip='localhost', port=8222):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((ip, port))
     server.listen(1)
